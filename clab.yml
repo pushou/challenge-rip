@@ -1,0 +1,96 @@
+name: challengerip
+prefix: "clab"
+
+mgmt:
+  network: netlab_mgmt
+  ipv4-subnet: 192.168.121.0/24
+  # Note: 'start' not validated
+topology:
+  nodes:
+    frr1:
+      mgmt-ipv4: 192.168.121.101
+      kind: linux
+      restart-policy: 'no'
+      exec: ['sleep 1']
+      image: quay.io/frrouting/frr:10.5.1
+      runtime: docker
+      group: 
+      binds:
+      - node_files/frr1/initial:/etc/config/01-initial.sh
+      - node_files/frr1/ripv2:/etc/config/02-ripv2.sh
+      - node_files/frr1/daemons:/etc/frr/daemons
+      - node_files/-shared-hosts:/etc/hosts:ro
+    frr2:
+      mgmt-ipv4: 192.168.121.102
+      kind: linux
+      restart-policy: 'no'
+      exec: ['sleep 1']
+      image: quay.io/frrouting/frr:10.5.1
+      runtime: docker
+      group: 
+      binds:
+      - node_files/frr2/initial:/etc/config/01-initial.sh
+      - node_files/frr2/ripv2:/etc/config/02-ripv2.sh
+      - node_files/frr2/daemons:/etc/frr/daemons
+      - node_files/-shared-hosts:/etc/hosts:ro
+    frr3:
+      mgmt-ipv4: 192.168.121.103
+      kind: linux
+      restart-policy: 'no'
+      exec: ['sleep 1']
+      image: quay.io/frrouting/frr:10.5.1
+      runtime: docker
+      group: 
+      binds:
+      - node_files/frr3/initial:/etc/config/01-initial.sh
+      - node_files/frr3/ripv2:/etc/config/02-ripv2.sh
+      - node_files/frr3/daemons:/etc/frr/daemons
+      - node_files/-shared-hosts:/etc/hosts:ro
+    frr4:
+      mgmt-ipv4: 192.168.121.104
+      kind: linux
+      restart-policy: 'no'
+      exec: ['sleep 1']
+      image: quay.io/frrouting/frr:10.5.1
+      runtime: docker
+      group: 
+      binds:
+      - node_files/frr4/initial:/etc/config/01-initial.sh
+      - node_files/frr4/daemons:/etc/frr/daemons
+      - node_files/-shared-hosts:/etc/hosts:ro
+    linux1:
+      mgmt-ipv4: 192.168.121.105
+      kind: linux
+      restart-policy: 'no'
+      image: wbitt/network-multitool:latest
+      runtime: docker
+      group: netlab_no_reload
+      binds:
+      - node_files/-shared-hosts:/etc/hosts:ro
+    linux2:
+      mgmt-ipv4: 192.168.121.106
+      kind: linux
+      restart-policy: 'no'
+      image: wbitt/network-multitool:latest
+      runtime: docker
+      group: netlab_no_reload
+      binds:
+      - node_files/-shared-hosts:/etc/hosts:ro
+
+
+  links:
+  - endpoints:
+    - "frr1:eth1"
+    - "frr2:eth1"
+  - endpoints:
+    - "frr2:eth2"
+    - "frr3:eth1"
+  - endpoints:
+    - "frr3:eth2"
+    - "frr4:eth1"
+  - endpoints:
+    - "frr1:eth2"
+    - "linux1:eth1"
+  - endpoints:
+    - "frr4:eth2"
+    - "linux2:eth1"

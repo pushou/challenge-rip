@@ -1,0 +1,13 @@
+#!/usr/bin/vtysh -f
+!
+router rip
+ version 2
+
+ network lo
+ network eth1
+ network eth2
+ passive-interface eth2
+!
+
+!
+do write

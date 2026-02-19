@@ -1,0 +1,46 @@
+message:
+  find and configure ripv2.
+
+provider: clab
+defaults.device: frr
+tools:
+ edgeshark:
+
+nodes:
+  frr1:
+    module: [ ripv2 ]
+  frr2:
+    module: [ ripv2 ]
+  frr3:
+    module: [ ripv2 ]
+  frr4:
+    module: [ ripv2 ]
+    skip_config: [ ripv2 ]
+  linux1:
+    device: linux
+    image: wbitt/network-multitool:latest
+  linux2:
+    device: linux
+    image: wbitt/network-multitool:latest
+
+links:
+   - frr1-frr2
+   - frr2-frr3
+   - frr3-frr4
+   - frr1-linux1
+   - frr4-linux2
+
+validate:
+  wait:
+    description: attente de rip
+    wait: 45
+  ping:
+    description: Ping-based reachability test
+    nodes: [linux1]
+    devices: [ linux ]
+    plugin: ping('linux2',af='ipv4',count=3)
+  check_rip_routes:
+    description: Vérifier que frr4 reçoit les routes RIP
+    nodes: [ frr4 ]
+    devices: [ frr ]
+    plugin: rip_routes()
